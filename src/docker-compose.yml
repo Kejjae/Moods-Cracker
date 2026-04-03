@@ -1,0 +1,21 @@
+services:
+  api_vision:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        REQ: requirements-vision.txt
+    ports:
+      - "8000:8000"
+    command: >
+      uvicorn face_analyze.main:app --host 0.0.0.0 --port 8000
+
+  api_tf:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        REQ: requirements-tf.txt
+    command: ["sh","-c","uvicorn tf_api:app --host 0.0.0.0 --port 8000"]
+    ports:
+      - "8001:8000"

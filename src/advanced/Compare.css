@@ -1,0 +1,307 @@
+html, body {
+  scroll-behavior: smooth;
+  height: 100%;
+  margin: 0;
+  scrollbar-color: rgb(0, 0, 0) rgb(231, 215, 185);
+  scrollbar-width: thin;
+  border-radius: 8px;
+  overflow-x: hidden;
+}
+
+p {
+    white-space: pre-line;
+}
+
+.container-c {
+    background-color: #F2F0E6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+}
+
+.container-c2 {
+    background-color: #F2F0E6;
+    height: 100vh;
+}
+
+.header-c {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: clamp(1%, 2vh, 3%) clamp(2%, 2vw, 4%);
+    position: relative;
+    z-index: 10;
+}
+
+.logo-c {
+    height: clamp(70px, 8vw, 120px);
+    width: clamp(70px, 8vw, 120px);
+    background-color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fextorflow-c {
+    font-family: 'Courier New', monospace;
+    font-size: clamp(0.8rem, 1.1vw, 1.5rem);
+    color: #ffffff;
+    cursor: pointer;
+    text-align: center;
+}
+
+.nav-item-c{
+    font-size: 40px;
+    color: #000;
+    cursor: pointer;
+    font-weight: 500;
+    padding: 18px 16px;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    font-family: "Josefin Sans", sans-serif;
+    margin-left: 10px;
+    position: static; /* กันโดน absolute จากที่อื่น */
+}
+
+.nav-general-c{
+    display: flex;
+    gap: 30px;
+    margin-top: 0;
+    margin-left: 0;
+}
+
+.nav-general-item-c{
+    font-size: 22px;
+    color: #000;
+    cursor: pointer;
+    font-weight: 400;
+    font-family: "Josefin Sans", sans-serif;
+}
+
+
+.c-nav {
+    display: flex;
+    gap: clamp(20px, 3vw, 40px);
+    align-items: center;
+}
+
+.c-nav-item {
+    font-size: clamp(16px, 2vw, 24px);
+    color: #000000;
+    cursor: pointer;
+    font-weight: 500;
+    font-style: italic;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    font-family: 'Courier New', monospace;
+}
+
+.content-c {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 30px;
+}
+
+.selector-section-c {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 10px;
+    margin-left: -5%;
+    margin-top: 2%;
+}
+
+.selector-label-c {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    color: #333;
+}
+
+.dropdown-c {
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: 2px solid #ddd;
+    background-color: rgb(255, 255, 255);
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+    min-width: 120px;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+    color: #000000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-c:hover {
+    border-color: #4A90E2;
+    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.2);
+}
+
+.dropdown-c:focus {
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.models-section-c {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    flex: 1;
+    padding: 20px;
+}
+
+.models-grid-c {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.model-card-c {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    text-align: center;
+    height: 100%;
+}
+
+.model-title-c {
+    font-family: 'Courier New', monospace;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+    padding: 10px 0;
+    border-bottom: 2px solid #4A90E2;
+}
+
+.c-graph {
+    max-width: 100%;
+    max-height: 250px;
+    width: auto;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+    margin-left: 0%;
+    cursor: pointer;
+}
+
+.c-graph:hover {
+    transform: scale(1.05);
+}
+
+/* Image Popup Styles */
+.image-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.image-popup-content {
+    background-color: white;
+    border-radius: 15px;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease-out;
+    overflow: hidden;
+}
+
+@keyframes slideIn {
+    from {
+        transform: scale(0.8) translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+.image-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px 15px 25px;
+    border-bottom: 2px solid #f0f0f0;
+    background-color: #fafafa;
+}
+
+.image-popup-title {
+    font-family: 'Courier New', monospace;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.image-popup-close {
+    background: none;
+    border: none;
+    font-size: 30px;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.image-popup-close:hover {
+    background-color: #f0f0f0;
+    color: #333;
+    transform: scale(1.1);
+}
+
+.image-popup-body {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    min-height: 0;
+}
+
+.image-popup-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    object-fit: contain;
+}

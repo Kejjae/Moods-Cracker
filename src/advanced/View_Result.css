@@ -1,0 +1,463 @@
+.vr-root {
+  height: 100vh;
+  width: 100vw;
+  background: #ffe7f7;
+  font-family: 'Courier New', monospace;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.box-grid-bg-vr {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(to right, #abda60 1px, transparent 1px),
+        linear-gradient(to bottom, #abda60 1px, transparent 1px);
+    background-size: 100px 100px;
+    filter: url(#wavy-vr);
+}
+
+.box-grid-svg-filter-vr {
+    position: fixed;
+    width: 0;
+    height: 0;
+}
+
+.vr-chip {
+  width: 190px;
+  height: 50px;
+  background-color: #704411;
+  border-radius: 25px;
+}
+.vr-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #b1e3f7;
+  letter-spacing: 0.5px;
+  font-family: "Anton", sans-serif;
+  font-optical-sizing: auto;
+  z-index: 99;
+  margin-left: 8%;
+  margin-top: 3%;
+}
+
+.vr-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 28px;
+  border-bottom: 1px solid #d4cdb8;
+  flex-shrink: 0;
+}
+
+.vr-download-btn {
+  background: #ffffff;
+  color: #e82c0c;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: 24px;
+  font-family: "Anton", sans-serif;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: background 0.2s;
+  width: 190px;
+  height: 50px;
+}
+
+.vr-download-btn:hover {
+  background: #ff8e31;
+  color:#fff;
+}
+
+.logo {
+  font-size: clamp(0.9rem, 1.4vw, 1.5rem);
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+.nav-vr-item {
+    font-size: 22px;
+    color: #ffffff;
+    cursor: pointer;
+    font-weight: 400;
+    font-family: "Anton", sans-serif;
+    font-optical-sizing: auto;
+    background-color: #e82c0c;
+    width: 190px;
+    height: 45px;
+    text-align: center;
+    border-radius: 25px;
+    z-index: 999;
+    transition: 0.4s;
+}
+
+.nav-vr-item-text{
+    margin-top: 3%;
+}
+
+.nav-vr-item:hover {
+    transform: scale(1.2); 
+    color: #e82c0c; 
+    background-color: #fff;
+}
+
+.vr-nav-home {
+  font-size: 0.85rem;
+  font-style: italic;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.vr-nav-home:hover { opacity: 1; }
+
+.vr-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  gap: 0;
+  z-index: 99;
+}
+
+.vr-left {
+  flex: 1 1 58%;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px 18px 24px;
+  overflow: hidden;
+  border-right: 1px solid #d4cdb8;
+}
+
+.vr-format-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.vr-data-panel {
+  flex: 1;
+  background: #fcfdf5;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  overflow: hidden;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.vr-chart-toggle-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-shrink: 0;
+  justify-content: center;
+}
+
+.vr-chart-toggle-btn {
+  padding: 7px 24px;
+  border-radius: 20px;
+  border: 2px solid #e82c0c;
+  background: transparent;
+  color: #e82c0c;
+  font-family: "Anton", sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.vr-chart-toggle-btn.active,
+.vr-chart-toggle-btn:hover {
+  background: #e82c0c;
+  color: #fff;
+}
+
+.vr-chart-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+}
+
+.vr-line-chart-svg {
+  width: 100%;
+  max-width: 680px;
+  height: auto;
+}
+
+.vr-pie-chart-svg {
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+}
+
+/* shared chart styles */
+.bar-chart-wrap { width: 100%; overflow-x: auto; margin-top: 15%;}
+.bar-chart-svg  { width: 100%; min-width: 700px; height: 420px; display: block; }
+.chart-axis     { stroke: #181c74; stroke-width: 5; }
+.chart-tick     { stroke: #181c74; stroke-width: 2; }
+.chart-tick-text{ fill: #181c74; font-size: 20px; font-weight: 700; }
+.chart-y-title  { fill: #111; font-size: 20px; font-weight: 700; }
+.chart-bar      { fill: #e97122; }
+.chart-value-text{ fill: #111; font-size: 20px; font-weight: 700; }
+.chart-x-label  { fill: #181c74; font-size: 20px; font-weight: 700; }
+
+/* table */
+.vr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.vr-table th, .vr-table td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  text-align: left;
+}
+.vr-table th {
+  background: #f5f0e0;
+  font-weight: 700;
+}
+.vr-table tr:nth-child(even) td { background: #fafafa; }
+
+.vr-detail-card {
+  top: 14px;
+  right: 18px;
+  z-index: 200;
+  background: #1e1008;
+  border: 2px solid #d8903a;
+  border-radius: 12px;
+  padding: 10px 14px 10px 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+  min-width: 180px;
+  max-width: 260px;
+  pointer-events: none;
+  margin-top: 3%;
+  margin-left: 30%;
+  margin-bottom: 3%;
+}
+
+.vr-detail-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1.5px solid #d8903a55;
+}
+
+.vr-detail-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.vr-detail-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  border-radius: 5px;
+  padding: 2px 8px;
+  align-self: flex-start;
+  letter-spacing: 0.3px;
+}
+
+.vr-detail-idx {
+  font-size: 11px;
+  color: #d8903a;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.vr-detail-meta {
+  font-size: 11px;
+  color: #ccc;
+}
+
+.vr-right {
+  flex: 0 0 42%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Video */
+.vr-video-wrap {
+  flex: 0 0 52%;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid #d4cdb8;
+}
+
+.vr-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.vr-no-video {
+  color: #888;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: #1a1a1a;
+}
+
+.vr-thumb-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 10px 12px 12px;
+}
+
+.vr-thumb-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.vr-thumb-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 4px;
+}
+
+.vr-thumb-list::-webkit-scrollbar { width: 2px; }
+.vr-thumb-list::-webkit-scrollbar-thumb { background: #704411; border-radius: 4px; }
+
+.vr-thumb-empty {
+  color: #ddcaca;
+  font-size: 0.8rem;
+  text-align: center;
+  padding-top: 20px;
+}
+
+.vr-thumb-card {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  border: 1px solid #e8e4d8;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+
+.vr-thumb-swatch {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vr-thumb-idx {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.9);
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.vr-thumb-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.vr-thumb-emotion {
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.vr-thumb-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.68rem;
+  color: #666;
+}
+
+.heatmap-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  transition: transform 0.1s;
+}
+
+.heatmap-box:hover {
+  transform: scale(1.4);
+}
+
+@media only screen and (max-width: 380px) {
+
+
+  .nav-vr-item {
+    font-size: 14px;
+    width: 120px;
+    height: 45px;
+}
+
+.nav-vr-item-text{
+    margin-top: 10%;
+}
+
+.vr-video-wrap {
+  visibility: hidden;
+}
+
+.vr-body {
+  flex-direction: column;
+  overflow: auto;
+}
+
+.vr-title {
+  font-size: 18px;
+  margin-top: 7%;
+}
+
+.vr-thumb-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  margin-left: 5%;
+  margin-top: -45%;
+}
+
+.vr-left {
+  height: 50px;
+}
+
+}

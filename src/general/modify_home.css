@@ -1,0 +1,1746 @@
+html, body {
+    scroll-behavior: smooth;
+    height: 100%;
+    margin: 0;
+    scrollbar-color: rgb(0, 0, 0) rgb(231, 215, 185);
+    scrollbar-width: thin;
+    overflow-x: hidden;
+    color-scheme: light;
+}
+
+p {
+    white-space: pre-line;
+}
+
+.box-grid-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(to right, #e82d0c79 1px, transparent 1px),
+        linear-gradient(to bottom, #e82d0c79 1px, transparent 1px);
+    background-size: 100px 100px;
+    filter: url(#wavy);
+}
+
+.box-grid-svg-filter {
+    position: fixed;
+    width: 0;
+    height: 0;
+}
+
+
+.Homecontainer {
+    background-size: 100% 100%;
+    height: 100vh;
+    width: 100vw;
+    background: #fffae2;
+}
+
+.Wheel {
+    position: absolute;
+    left: 50%;
+    top: 35%;
+    width: 500px;
+    height: 300px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+}
+
+.wheel-card {
+    width: 140px;
+    height: 160px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 8px 12px 0 rgba(0, 0, 0, 0.18);
+    background: #fff;
+    pointer-events: auto;
+}
+
+.wheel-card .card-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s ease-out;
+}
+
+.wheel-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.wheel-card.neutral  { background-color: #ffffff; }
+.wheel-card.angry    { background-color: #9A2315; }
+.wheel-card.happy    { background-color: #b9e7ab; }
+.wheel-card.surprise { background-color: #DACBF1; }
+.wheel-card.disgust  { background-color: #e95d22; }
+.wheel-card.fear     { background-color: #070605; }
+.wheel-card.sad      { background-color: #2D49D7; }
+
+.wheel-card.neutral span { color: #111; }
+
+.MiddleContent {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    min-height: 700px;
+}
+
+.Content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.TopContent {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+}
+
+.MiddleContent {
+    display:flex;
+    flex-direction: column;
+
+}
+
+.BottomContent {
+    display: flex;
+    flex-direction: column;
+    margin-top: -160px;
+    background-color: #ff8e31;
+    border-radius: 100px 0px 0px 0px;
+    height: 400px; 
+
+}
+
+.logo {
+    padding: 8px 16px;
+    margin-left: -30px;
+    margin-top: -5%;
+}
+
+.About {
+    font-size: 35px;
+    padding: 8px 16px;
+    text-align: center;
+    letter-spacing: 2px;
+    color: #fd350d;
+    margin-top: 0%;
+    font-family: "Anton", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: weight;
+    font-style: normal;
+    cursor: pointer;
+    margin-left: 44%;
+}
+
+.About:hover {
+    padding: 8px 16px;
+    text-align: center;
+    letter-spacing: 2px;
+    color: #000000;
+    font-family: "Anton", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: weight;
+    font-style: normal;
+    cursor: pointer;
+    left: -2px;
+}
+
+.hero-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.sticker-1 {
+    position: absolute;
+    margin-top: 15%;
+    transform: rotate(15deg);
+    margin-left: 3%;
+}
+
+.sticker-1 img {
+    width: 200px;
+}
+
+.sticker-2 {
+    position: absolute;
+    margin-top: 25%;
+    margin-left: 9%;
+}
+
+.sticker-2 img {
+    width: 200px;
+}
+
+.sticker-3 {
+    position: absolute;
+    margin-top: -1%;
+    margin-left: 80%;
+    transform: rotate(-15deg);
+}
+
+.sticker-3 img {
+    width: 230px;
+}
+
+.text-left {
+    font-size: 190px;
+    font-weight: 900;
+    color: #e82c0c;
+    line-height: 0.9;
+    font-family: "Anton", sans-serif;
+    position: absolute;
+    left: 10px;
+    top: 35px;
+    z-index: 1;
+}
+
+.text-right {
+    font-family: "Anton", sans-serif;
+    font-size: 180px;
+    font-weight: 900;
+    color: #e82c0c;
+    line-height: 0.9;
+    z-index: 1;
+    margin-top: 19%;
+    margin-left: 70%
+}
+
+.text-low-right {
+    font-family: "Anton", sans-serif;
+    font-size: 100px;
+    font-weight: 900;
+    color: #e82c0c;
+    line-height: 0.9;
+    z-index: 1;
+    margin-left: 58%;
+    white-space: nowrap;
+}
+
+.oblique-char {
+    transform: skewX(15deg);
+    display: inline-block;
+}
+
+.emotional {
+    width: 100%;
+    height: var(--height);
+    overflow: hidden;
+    mask-image: linear-gradient(
+        to right,
+        transparent,
+        #000 20% 80%,
+        transparent
+    );
+    position: relative;
+}
+
+.emotional .emotional-panel {
+    display: flex;
+    width: 100%;
+    min-width: calc(var(--width) * var(--quantity));
+    position: relative;
+    height: var(--height);
+    top: 25%
+}
+
+.emotional .emotional-panel .dot {
+    height: var(--height);
+    width: var(--width);
+    position: absolute;
+    left: 100%;
+    animation: autoRun 50s linear infinite;
+    transition: filter 0.5s;
+    animation-delay: calc( (50s / var(--quantity)) * (var(--position) - 1) )!important;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emotional .emotional-panel .dot span {
+    width: 100%;
+    text-align: center;
+    font-size: 20px;
+    letter-spacing: 2px;
+    font-family: "Anton", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    margin-top: 15px;
+    color: #fff;
+}
+
+.emotional .emotional-panel .dot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.card {
+    width: 120px;
+    height: 120px;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+@keyframes autoRun {
+    from { left: 100%; }
+    to   { left: calc(var(--width) * -1); }
+}
+
+@keyframes cardsRun {
+    from { left: 100%;  }
+    to   { left: calc(var(--width) * -1); }
+}
+
+@keyframes reversePlay {
+    from { left: calc(var(--width) * -1); }
+    to   { left: 100%; }
+}
+
+.buttonFind {
+    background-color:  #ffffffdc;
+    cursor: pointer;
+    width: 200px;
+    height: 48px;
+    border:2px solid #000000;
+    justify-content: center;
+    margin-left: 44%;
+    position: relative;
+    margin-top: -19%;
+}
+
+.buttonFind p {
+    font-family: "Anton", sans-serif;
+    font-size: 35px;
+    font-weight: 500;
+    font-style: normal;
+    margin-top: -8%;
+    color: #e82c0c;
+}
+
+
+.buttonFind:hover{
+    background-color: #e82c0c;
+    border:2px solid #370909;
+}
+
+.buttonFind:hover p{
+    color: rgb(255, 255, 255);
+    font-size: 35px;
+    font-weight: 500;
+    font-style: normal;
+    margin-top: -8%;
+}
+
+
+@media only screen and (max-width: 380px){
+
+    .Content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .TopContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .logo {
+        padding: 8px 16px;
+        margin-left: -80%;
+        margin-top: -70%;
+    }
+
+    .About {
+        margin-left: 167%;
+        margin-top: 10%;
+        margin-bottom: 5%;
+        font-size: 20px;
+    }
+
+    .sticker-1 {
+        visibility: hidden;
+    }
+
+    .sticker-2 {
+        position: absolute;
+        margin-top: 225%;
+        margin-left: -39%;
+    }
+
+    .sticker-2 img {
+        width: 200px;
+    }
+
+    .sticker-3 {
+        position: absolute;
+        margin-top: 25%;
+        margin-left: -20%;
+        transform: rotate(-15deg);
+    }
+
+    .sticker-3 img {
+        width: 150px;
+    }
+
+    .Wheel {
+        position: absolute;
+        left: 50%;
+        top: 57%;
+        width: 50px;
+        height: 30px;
+    }
+
+    .wheel-card {
+        width: 70px;
+        height: 90px;
+        position: absolute;
+        transform: translate(-50%, -50%);
+    }
+
+    .wheel-card .card-inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.15s ease-out;
+    }
+
+    .wheel-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .hero-section {
+        overflow: visible;
+    }
+
+    .text-left {
+        font-size: 80px;
+        color: #e82c0c;
+        position: absolute;
+        left: -50px;
+        top: 10px;
+    }
+
+    .text-right {
+        font-size: 70px;
+        color: #e82c0c;
+        margin-top: 59%;
+        margin-left: 50%
+    }
+
+    .text-low-right {
+        font-size: 53px;
+        color: #e82c0c;
+        margin-left: 118%;
+        white-space: nowrap;
+    }
+
+    .oblique-char {
+        transform: skewX(15deg);
+        display: inline-block;
+    }
+
+    .buttonFind {
+        cursor: pointer;
+        margin-left: 4%;
+        position: relative;
+        margin-top: 138%;
+        background-color:  #e82c0c;
+    }
+
+    .buttonFind p {
+        color: #ffffff;
+    }
+
+
+    .buttonFind:hover{
+        background-color: #ffffff;
+        border:2px solid #370909;
+    }
+
+    .buttonFind:hover p{
+        color: #e82c0c;
+}
+
+    .BottomContent {
+        margin-top: -130px;
+        background-color: #ff8e31;
+        height: 120px; 
+        width: 400px;
+    }
+
+    html, body {
+        overflow-x: hidden;
+    }
+
+    .box-grid-bg {
+        overflow-x: hidden;
+    }
+
+    .box-grid-svg-filter {
+        overflow-x: hidden;
+    }
+    
+    .Homecontainer {
+        overflow-x: hidden;
+    }
+
+    @keyframes autoRun {
+        from { left: 100%; }
+        to   { left: calc(var(--width) * -1); }
+    }
+
+    .emotional .emotional-panel .dot {
+        animation: autoRun 15s linear infinite;
+        transition: filter 1.0s;
+        animation-delay: calc( (15s / var(--quantity)) * (var(--position) - 1) )!important;
+    }
+}
+
+@media only screen and (min-width: 390px) and (max-width: 400px){
+
+    .Content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .TopContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .logo {
+        padding: 8px 16px;
+        margin-left: -90%;
+        margin-top: -70%;
+    }
+
+    .About {
+        margin-left: 185%;
+        margin-top: 10%;
+        margin-bottom: 5%;
+        font-size: 20px;
+    }
+
+    .sticker-1 {
+        visibility: hidden;
+    }
+
+    .sticker-2 {
+        position: absolute;
+        margin-top: 231%;
+        margin-left: -45%;
+    }
+
+    .sticker-2 img {
+        width: 200px;
+    }
+
+    .sticker-3 {
+        position: absolute;
+        margin-top: 29%;
+        margin-left: -28%;
+        transform: rotate(-15deg);
+    }
+
+    .sticker-3 img {
+        width: 150px;
+    }
+
+    .Wheel {
+        position: absolute;
+        left: 50%;
+        top: 59%;
+        width: 50px;
+        height: 30px;
+    }
+
+    .wheel-card {
+        width: 70px;
+        height: 90px;
+    }
+
+    .wheel-card .card-inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+    }
+
+    .wheel-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .hero-section {
+        overflow: visible;
+    }
+
+    .text-left {
+        font-size: 100px;
+        color: #e82c0c;
+        position: absolute;
+        left: -74px;
+        top: 10px;
+    }
+
+    .text-right {
+        font-size: 80px;
+        color: #e82c0c;
+        margin-top: 59%;
+        margin-left: 45%
+    }
+
+    .text-low-right {
+        font-size: 53px;
+        color: #e82c0c;
+        margin-left: 118%;
+        white-space: nowrap;
+    }
+
+    .oblique-char {
+        transform: skewX(15deg);
+        display: inline-block;
+    }
+
+    .buttonFind {
+        cursor: pointer;
+        margin-left: 4%;
+        position: relative;
+        margin-top: 148%;
+        background-color:  #e82c0c;
+    }
+
+    .buttonFind p {
+        color: #ffffff;
+    }
+
+
+    .buttonFind:hover{
+        background-color: #ffffff;
+        border:2px solid #370909;
+    }
+
+    .buttonFind:hover p{
+        color: #e82c0c;
+}
+
+    .BottomContent {
+        display: flex;
+        margin-top: -101px;
+        height: 139px; 
+        width: 400px;
+    }
+
+    html, body {
+        overflow-x: hidden;
+    }
+
+    .box-grid-bg {
+        overflow-x: hidden;
+    }
+
+    .box-grid-svg-filter {
+        overflow-x: hidden;
+    }
+    
+    .Homecontainer {
+        overflow-x: hidden;
+    }
+
+    @keyframes autoRun {
+        from { left: 100%; }
+        to   { left: calc(var(--width) * -1); }
+    }
+
+    .emotional .emotional-panel .dot {
+        animation: autoRun 15s linear infinite;
+        transition: filter 1.0s;
+        animation-delay: calc( (15s / var(--quantity)) * (var(--position) - 1) )!important;
+    }
+}
+
+@media only screen and (min-width: 410px) and (max-width: 415px){
+
+    .Content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .TopContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .logo {
+        padding: 8px 16px;
+        margin-left: -100%;
+        margin-top: -70%;
+    }
+
+    .About {
+        margin-left: 195%;
+        margin-top: 10%;
+        margin-bottom: 5%;
+        font-size: 20px;
+    }
+
+    .sticker-1 {
+        visibility: hidden;
+    }
+
+    .sticker-2 {
+        position: absolute;
+        margin-top: 231%;
+        margin-left: -45%;
+    }
+
+    .sticker-2 img {
+        width: 200px;
+    }
+
+    .sticker-3 {
+        position: absolute;
+        margin-top: 29%;
+        margin-left: -28%;
+        transform: rotate(-15deg);
+    }
+
+    .sticker-3 img {
+        width: 150px;
+    }
+
+    .Wheel {
+        left: 50%;
+        top: 59%;
+        width: 50px;
+        height: 30px;
+    }
+
+    .wheel-card {
+        width: 70px;
+        height: 90px;
+    }
+
+    .wheel-card .card-inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.15s ease-out;
+    }
+
+    .wheel-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .hero-section {
+        overflow: visible;
+    }
+
+    .text-left {
+        font-size: 100px;
+        color: #e82c0c;
+        position: absolute;
+        left: -74px;
+        top: 10px;
+    }
+
+    .text-right {
+        font-size: 80px;
+        color: #e82c0c;
+        margin-top: 59%;
+        margin-left: 45%
+    }
+
+    .text-low-right {
+        font-size: 53px;
+        color: #e82c0c;
+        margin-left: 118%;
+        white-space: nowrap;
+    }
+
+    .oblique-char {
+        transform: skewX(15deg);
+        display: inline-block;
+    }
+
+    .buttonFind {
+        cursor: pointer;
+        margin-left: 4%;
+        position: relative;
+        margin-top: 148%;
+        background-color:  #e82c0c;
+    }
+
+    .buttonFind p {
+        color: #ffffff;
+    }
+
+
+    .buttonFind:hover{
+        background-color: #ffffff;
+        border:2px solid #370909;
+    }
+
+    .buttonFind:hover p{
+        color: #e82c0c;
+}
+
+    .BottomContent {
+        display: flex;
+        flex-direction: column;
+        margin-top: -55px;
+        height: 110px; 
+        width: 420px;
+    }
+
+    html, body {
+        overflow-x: hidden;
+    }
+
+    .box-grid-bg {
+        overflow-x: hidden;
+    }
+
+    .box-grid-svg-filter {
+        overflow-x: hidden;
+    }
+    
+    .Homecontainer {
+        overflow-x: hidden;
+    }
+
+    @keyframes autoRun {
+        from { left: 100%; }
+        to   { left: calc(var(--width) * -1); }
+    }
+
+    .emotional .emotional-panel .dot {
+        animation: autoRun 15s linear infinite;
+        transition: filter 1.0s;
+        animation-delay: calc( (15s / var(--quantity)) * (var(--position) - 1) )!important;
+    }
+}
+
+@media only screen and (min-width: 760px) and (max-width: 780px){
+
+    .Content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .TopContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .logo {
+        padding: 8px 16px;
+        margin-left: -210%;
+        margin-top: -60%;
+    }
+
+    .About {
+        margin-left: 400%;
+        margin-top: 10%;
+        margin-bottom: 5%;
+        font-size: 20px;
+    }
+
+    .sticker-1 {
+        position: absolute;
+        margin-top: -14%;
+        margin-left: 80%;
+    }
+
+    .sticker-1 img {
+        width: 230px;
+    }
+
+    .sticker-2 {
+        position: absolute;
+        margin-top: 200%;
+        margin-left: -45%;
+    }
+
+    .sticker-2 img {
+        width: 230px;
+    }
+
+    .sticker-3 {
+        position: absolute;
+        margin-top: 35%;
+        margin-left: -28%;
+        transform: rotate(-15deg);
+    }
+
+    .sticker-3 img {
+        width: 230px;
+    }
+
+    .Wheel {
+        position: absolute;
+        left: 50%;
+        top: 59%;
+        width: 50px;
+        height: 30px;
+    }
+
+    .wheel-card {
+        width: 120px;
+        height: 140px;
+        position: absolute;
+    }
+
+    .wheel-card .card-inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+    }
+
+    .wheel-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .hero-section {
+        overflow: visible;
+    }
+
+    .text-left {
+        font-size: 150px;
+        color: #e82c0c;
+        position: absolute;
+        left: -65%;
+        top: 10px;
+    }
+
+    .text-right {
+        font-size: 130px;
+        color: #e82c0c;
+        margin-top: 59%;
+        margin-left: 65%
+    }
+
+    .text-low-right {
+        font-size: 100px;
+        color: #e82c0c;
+        margin-left: 210%;
+        white-space: nowrap;
+    }
+
+    .oblique-char {
+        transform: skewX(15deg);
+        display: inline-block;
+    }
+
+    .buttonFind {
+        cursor: pointer;
+        margin-left: 22%;
+        position: relative;
+        margin-top: 24%;
+        background-color:  #e82c0c;
+        width: 220px;
+        height: 52px;
+    }
+
+    .buttonFind p {
+        color: #ffffff;
+    }
+
+
+    .buttonFind:hover{
+        background-color: #ffffff;
+        border:2px solid #370909;
+    }
+
+    .buttonFind:hover p{
+        color: #e82c0c;
+}
+
+    .BottomContent {
+        display: flex;
+        flex-direction: column;
+        margin-top: 78px;
+        height: 110px; 
+        width: 780px;
+    }
+
+    html, body {
+        overflow-x: hidden;
+    }
+
+    .box-grid-bg {
+        overflow-x: hidden;
+    }
+
+    .box-grid-svg-filter {
+        overflow-x: hidden;
+    }
+    
+    .Homecontainer {
+        overflow-x: hidden;
+    }
+
+    @keyframes autoRun {
+        from { left: 100%; }
+        to   { left: calc(var(--width) * -1); }
+    }
+
+    .emotional .emotional-panel .dot {
+        animation: autoRun 15s linear infinite;
+        transition: filter 1.0s;
+        animation-delay: calc( (15s / var(--quantity)) * (var(--position) - 1) )!important;
+    }
+}
+
+@media only screen and (min-width: 810px) and (max-width: 820px){
+
+    .Content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .TopContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .logo {
+        padding: 8px 16px;
+        margin-left: -220%;
+        margin-top: -70%;
+    }
+
+    .About {
+        margin-left: 450%;
+        margin-top: 10%;
+        margin-bottom: 5%;
+        font-size: 20px;
+    }
+
+    .sticker-1 {
+        position: absolute;
+        margin-top: -14%;
+        margin-left: 80%;
+    }
+
+    .sticker-1 img {
+        width: 230px;
+    }
+
+    .sticker-2 {
+        position: absolute;
+        margin-top: 210%;
+        margin-left: -45%;
+    }
+
+    .sticker-2 img {
+        width: 230px;
+    }
+
+    .sticker-3 {
+        position: absolute;
+        margin-top: 35%;
+        margin-left: -28%;
+        transform: rotate(-15deg);
+    }
+
+    .sticker-3 img {
+        width: 230px;
+    }
+
+    .Wheel {
+        position: absolute;
+        left: 50%;
+        top: 59%;
+        width: 50px;
+        height: 30px;
+    }
+
+    .wheel-card {
+        width: 120px;
+        height: 140px;
+        position: absolute;
+    }
+
+    .wheel-card .card-inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+    }
+
+    .wheel-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .hero-section {
+        overflow: visible;
+    }
+
+    .text-left {
+        font-size: 150px;
+        color: #e82c0c;
+        position: absolute;
+        left: -65%;
+        top: 10px;
+    }
+
+    .text-right {
+        font-size: 130px;
+        color: #e82c0c;
+        margin-top: 59%;
+        margin-left: 65%
+    }
+
+    .text-low-right {
+        font-size: 100px;
+        color: #e82c0c;
+        margin-left: 210%;
+        white-space: nowrap;
+    }
+
+    .oblique-char {
+        transform: skewX(15deg);
+        display: inline-block;
+    }
+
+    .buttonFind {
+        cursor: pointer;
+        margin-left: 22%;
+        position: relative;
+        margin-top: 30%;
+        background-color:  #e82c0c;
+        width: 220px;
+        height: 52px;
+    }
+
+    .buttonFind p {
+        color: #ffffff;
+    }
+
+
+    .buttonFind:hover{
+        background-color: #ffffff;
+        border:2px solid #370909;
+    }
+
+    .buttonFind:hover p{
+        color: #e82c0c;
+}
+
+    .BottomContent {
+        display: flex;
+        flex-direction: column;
+        margin-top: 108px;
+        height: 138px; 
+        width: 820px;
+    }
+
+    html, body {
+        overflow-x: hidden;
+    }
+
+    .box-grid-bg {
+        overflow-x: hidden;
+    }
+
+    .box-grid-svg-filter {
+        overflow-x: hidden;
+    }
+    
+    .Homecontainer {
+        overflow-x: hidden;
+    }
+
+    @keyframes autoRun {
+        from { left: 100%; }
+        to   { left: calc(var(--width) * -1); }
+    }
+
+    .emotional .emotional-panel .dot {
+        animation: autoRun 15s linear infinite;
+        transition: filter 1.0s;
+        animation-delay: calc( (15s / var(--quantity)) * (var(--position) - 1) )!important;
+    }
+
+    .emotional .emotional-panel .dot span {
+        font-size: 30px;
+    }
+}
+
+@media only screen and (min-width: 790px) and (max-width: 800px){
+
+    .Content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .TopContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .logo {
+        padding: 8px 16px;
+        margin-left: -210%;
+        margin-top: -70%;
+    }
+
+    .About {
+        margin-left: 445%;
+        margin-top: 10%;
+        margin-bottom: 5%;
+        font-size: 20px;
+    }
+
+    .sticker-1 {
+        position: absolute;
+        margin-top: -14%;
+        margin-left: 80%;
+    }
+
+    .sticker-1 img {
+        width: 230px;
+    }
+
+    .sticker-2 {
+        position: absolute;
+        margin-top: 275%;
+        margin-left: -45%;
+    }
+
+    .sticker-2 img {
+        width: 230px;
+    }
+
+    .sticker-3 {
+        position: absolute;
+        margin-top: 35%;
+        margin-left: -28%;
+        transform: rotate(-15deg);
+    }
+
+    .sticker-3 img {
+        width: 230px;
+    }
+
+    .Wheel {
+        position: absolute;
+        left: 50%;
+        top: 59%;
+        width: 50px;
+        height: 30px;
+    }
+
+    .wheel-card {
+        width: 120px;
+        height: 140px;
+        position: absolute;
+    }
+
+    .wheel-card .card-inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+    }
+
+    .wheel-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .hero-section {
+        overflow: visible;
+    }
+
+    .text-left {
+        font-size: 150px;
+        color: #e82c0c;
+        position: absolute;
+        left: -65%;
+        top: 10px;
+    }
+
+    .text-right {
+        font-size: 130px;
+        color: #e82c0c;
+        margin-top: 80%;
+        margin-left: 65%
+    }
+
+    .text-low-right {
+        font-size: 100px;
+        color: #e82c0c;
+        margin-left: 210%;
+        white-space: nowrap;
+    }
+
+    .oblique-char {
+        transform: skewX(15deg);
+        display: inline-block;
+    }
+
+    .buttonFind {
+        cursor: pointer;
+        margin-left: 22%;
+        position: relative;
+        margin-top: 50%;
+        background-color:  #e82c0c;
+        width: 220px;
+        height: 52px;
+    }
+
+    .buttonFind p {
+        color: #ffffff;
+    }
+
+
+    .buttonFind:hover{
+        background-color: #ffffff;
+        border:2px solid #370909;
+    }
+
+    .buttonFind:hover p{
+        color: #e82c0c;
+}
+
+    .BottomContent {
+        display: flex;
+        flex-direction: column;
+        margin-top: 39%;
+        height: 138px; 
+        width: 820px;
+    }
+
+    html, body {
+        overflow-x: hidden;
+    }
+
+    .box-grid-bg {
+        overflow-x: hidden;
+    }
+
+    .box-grid-svg-filter {
+        overflow-x: hidden;
+    }
+    
+    .Homecontainer {
+        overflow-x: hidden;
+    }
+
+    @keyframes autoRun {
+        from { left: 100%; }
+        to   { left: calc(var(--width) * -1); }
+    }
+
+    .emotional .emotional-panel .dot {
+        animation: autoRun 15s linear infinite;
+        transition: filter 1.0s;
+        animation-delay: calc( (15s / var(--quantity)) * (var(--position) - 1) )!important;
+    }
+
+    .emotional .emotional-panel .dot span {
+        font-size: 30px;
+    }
+}
+
+@media only screen and (min-width: 820px) and (max-width: 830px){
+
+    .Content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .TopContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .logo {
+        padding: 8px 16px;
+        margin-left: -210%;
+        margin-top: -55%;
+    }
+
+    .About {
+        margin-left: 440%;
+        margin-top: 10%;
+        margin-bottom: 5%;
+    }
+
+    .sticker-1 {
+        position: absolute;
+        margin-top: -14%;
+        margin-left: 80%;
+    }
+
+    .sticker-1 img {
+        width: 230px;
+    }
+
+    .sticker-2 {
+        position: absolute;
+        margin-top: 245%;
+        margin-left: -45%;
+    }
+
+    .sticker-2 img {
+        width: 230px;
+    }
+
+    .sticker-3 {
+        position: absolute;
+        margin-top: 35%;
+        margin-left: -28%;
+        transform: rotate(-15deg);
+    }
+
+    .sticker-3 img {
+        width: 230px;
+    }
+
+    .Wheel {
+        position: absolute;
+        left: 50%;
+        top: 59%;
+        width: 50px;
+        height: 30px;
+    }
+
+    .wheel-card {
+        width: 120px;
+        height: 140px;
+        position: absolute;
+    }
+
+    .wheel-card .card-inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+    }
+
+    .wheel-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .hero-section {
+        overflow: visible;
+    }
+
+    .text-left {
+        font-size: 150px;
+        color: #e82c0c;
+        position: absolute;
+        left: -65%;
+        top: 10px;
+    }
+
+    .text-right {
+        font-size: 130px;
+        color: #e82c0c;
+        margin-top: 80%;
+        margin-left: 65%
+    }
+
+    .text-low-right {
+        font-size: 100px;
+        color: #e82c0c;
+        margin-left: 210%;
+        white-space: nowrap;
+    }
+
+    .oblique-char {
+        transform: skewX(15deg);
+        display: inline-block;
+    }
+
+    .buttonFind {
+        cursor: pointer;
+        margin-left: 22%;
+        position: relative;
+        margin-top: 35%;
+        background-color:  #e82c0c;
+        width: 220px;
+        height: 52px;
+    }
+
+    .buttonFind p {
+        color: #ffffff;
+    }
+
+
+    .buttonFind:hover{
+        background-color: #ffffff;
+        border:2px solid #370909;
+    }
+
+    .buttonFind:hover p{
+        color: #e82c0c;
+}
+
+    .BottomContent {
+        display: flex;
+        flex-direction: column;
+        margin-top: 26%;
+        height: 138px; 
+        width: 820px;
+    }
+
+    html, body {
+        overflow-x: hidden;
+    }
+
+    .box-grid-bg {
+        overflow-x: hidden;
+    }
+
+    .box-grid-svg-filter {
+        overflow-x: hidden;
+    }
+    
+    .Homecontainer {
+        overflow-x: hidden;
+    }
+
+    @keyframes autoRun {
+        from { left: 100%; }
+        to   { left: calc(var(--width) * -1); }
+    }
+
+    .emotional .emotional-panel .dot {
+        animation: autoRun 15s linear infinite;
+        transition: filter 1.0s;
+        animation-delay: calc( (15s / var(--quantity)) * (var(--position) - 1) )!important;
+    }
+
+    .emotional .emotional-panel .dot span {
+        font-size: 30px;
+    }
+}
+
+@media only screen and (min-width: 1020px) and (max-width: 1030px){
+
+    .Content {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.8rem;
+    }
+    .TopContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .logo {
+        padding: 8px 16px;
+        margin-left: -195%;
+        margin-top: -55%;
+    }
+
+    .About {
+        margin-left: 405%;
+        margin-top: 10%;
+        margin-bottom: 5%;
+    }
+
+    .sticker-1 {
+        position: absolute;
+        margin-top: -14%;
+        margin-left: 80%;
+    }
+
+    .sticker-1 img {
+        width: 270px;
+    }
+
+    .sticker-2 {
+        position: absolute;
+        margin-top: 230%;
+        margin-left: -45%;
+    }
+
+    .sticker-2 img {
+        width: 230px;
+    }
+
+    .sticker-3 {
+        position: absolute;
+        margin-top: 45%;
+        margin-left: -28%;
+        transform: rotate(-15deg);
+    }
+
+    .sticker-3 img {
+        width: 270px;
+    }
+
+    .Wheel {
+        position: absolute;
+        left: 50%;
+        top: 60%;
+        width: 50px;
+        height: 30px;
+    }
+
+    .wheel-card {
+        width: 170px;
+        height: 200px;
+        position: absolute;
+    }
+
+    .wheel-card .card-inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+    }
+
+    .wheel-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .hero-section {
+        overflow: visible;
+    }
+
+    .text-left {
+        font-size: 190px;
+        color: #e82c0c;
+        position: absolute;
+        left: -65%;
+        top: 20px;
+    }
+
+    .text-right {
+        font-size: 170px;
+        color: #e82c0c;
+        margin-top: 65%;
+        margin-left: 65%
+    }
+
+    .text-low-right {
+        font-size: 150px;
+        color: #e82c0c;
+        margin-left: 210%;
+        white-space: nowrap;
+    }
+
+    .oblique-char {
+        transform: skewX(15deg);
+        display: inline-block;
+    }
+
+    .buttonFind {
+        cursor: pointer;
+        margin-left: 22%;
+        position: relative;
+        margin-top: 34%;
+        background-color:  #e82c0c;
+        width: 250px;
+        height: 82px;
+    }
+
+    .buttonFind p {
+        color: #ffffff;
+        font-size: 60px;
+    }
+
+
+    .buttonFind:hover{
+        background-color: #ffffff;
+        border:2px solid #370909;
+    }
+
+    .buttonFind:hover p{
+        color: #e82c0c;
+}
+
+    .BottomContent {
+        display: flex;
+        flex-direction: column;
+        margin-top: 26%;
+        height: 150px; 
+        width: 1080px;
+    }
+
+    html, body {
+        overflow-x: hidden;
+    }
+
+    .box-grid-bg {
+        overflow-x: hidden;
+    }
+
+    .box-grid-svg-filter {
+        overflow-x: hidden;
+    }
+    
+    .Homecontainer {
+        overflow-x: hidden;
+    }
+
+    @keyframes autoRun {
+        from { left: 100%; }
+        to   { left: calc(var(--width) * -1); }
+    }
+
+    .emotional .emotional-panel .dot {
+        animation: autoRun 15s linear infinite;
+        transition: filter 1.0s;
+        animation-delay: calc( (15s / var(--quantity)) * (var(--position) - 1) )!important;
+    }
+}

@@ -1,0 +1,37 @@
+AttributeError: 'MessageFactory' object has no attribute 'GetPrototype'
+E:\fextorflow-app\src\face_analyze\main.py:44: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")
+Form data requires "python-multipart" to be installed. 
+You can install "python-multipart" with: 
+
+pip install python-multipart
+
+Traceback (most recent call last):
+  File "E:\anaconda3\envs\fer-headpose\lib\runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "E:\anaconda3\envs\fer-headpose\lib\runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "E:\fextorflow-app\src\face_analyze\main.py", line 112, in <module>
+    async def predict_image(
+  File "E:\anaconda3\envs\fer-headpose\lib\site-packages\fastapi\routing.py", line 1078, in decorator
+    self.add_api_route(
+  File "E:\anaconda3\envs\fer-headpose\lib\site-packages\fastapi\routing.py", line 1017, in add_api_route
+    route = route_class(
+  File "E:\anaconda3\envs\fer-headpose\lib\site-packages\fastapi\routing.py", line 636, in __init__
+    self.dependant = get_dependant(
+  File "E:\anaconda3\envs\fer-headpose\lib\site-packages\fastapi\dependencies\utils.py", line 259, in get_dependant
+    param_details = analyze_param(
+  File "E:\anaconda3\envs\fer-headpose\lib\site-packages\fastapi\dependencies\utils.py", line 496, in analyze_param
+    ensure_multipart_is_installed()
+  File "E:\anaconda3\envs\fer-headpose\lib\site-packages\fastapi\dependencies\utils.py", line 121, in ensure_multipart_is_installed
+    raise RuntimeError(multipart_not_installed_error) from None
+RuntimeError: Form data requires "python-multipart" to be installed. 
+You can install "python-multipart" with: 
+
+pip install python-multipart
+
