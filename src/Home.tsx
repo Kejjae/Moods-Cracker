@@ -136,10 +136,13 @@ function Home(props: HomeProps) {
                     {emotions.map((emotion, i) => {
                         const theta = (2 * Math.PI * i) / emotions.length + (angle * Math.PI / 180);
                         const w = window.innerWidth;
+                        const isLandscape800 = window.matchMedia('(min-width: 800px) and (max-width: 815px) and (orientation: landscape)').matches;
+                        const isLandscape840 = window.matchMedia('(min-width: 840px) and (max-width: 875px) and (orientation: landscape)').matches;
+                        const isLandscape890 = window.matchMedia('(min-width: 890px) and (max-width: 900px) and (orientation: landscape)').matches;
                         const isLandscape1020 = window.matchMedia('(min-width: 1020px) and (max-width: 1079px) and (orientation: landscape)').matches;
                         const isLandscape1280 = window.matchMedia('(min-width: 1280px) and (max-width: 1281px) and (orientation: landscape)').matches;
-                        const rx = isLandscape1020 ? 300 : isLandscape1280 ? 350 : w <= 415 ? 130 : w <= 780 ? 260 : w <= 820 ? 290 : w <= 1030 ? 360 : 340;
-                        const ry = isLandscape1020 ? 150 : isLandscape1280 ? 160 : w <= 415 ? 80  : w <= 780 ? 180 : w <= 820 ? 190 : w <= 1030 ? 260 : 200;
+                        const rx = isLandscape800 ? 200 : isLandscape840 ? 250 : isLandscape890 ? 300 : isLandscape1020 ? 300 : isLandscape1280 ? 350 : w <= 415 ? 130 : w <= 780 ? 260 : w <= 820 ? 290 : w <= 1030 ? 360 : 340;
+                        const ry = isLandscape800 ? 150 : isLandscape840 ? 150 : isLandscape890 ? 150 : isLandscape1020 ? 150 : isLandscape1280 ? 160 : w <= 415 ? 80  : w <= 780 ? 180 : w <= 820 ? 190 : w <= 1030 ? 260 : 200;
 
                         const x = Math.cos(theta) * rx;
                         const y = -Math.sin(theta) * ry;
