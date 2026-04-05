@@ -6,3 +6,8 @@ Long Short-Term Memory (LSTM) for temporal sequence learning.
 Our system covers six emotions (custom-trained):
 happiness, sadness, anger, fear, disgust, and surprise. And seven emotions including Neutral (from the original model). The platform supports image,
 video, and real-time webcam input with probability scores and temporal emotion timelines.
+
+
+
+* Dataset 
+  * KDEF , KDEF dyn-II : [https://kdef.se/](https://kdef.se/)
