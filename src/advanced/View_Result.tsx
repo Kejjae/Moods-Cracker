@@ -32,6 +32,7 @@ const ViewResult = (props: ViewResultProps) => {
   const webcamResults = location.state?.webcamResults || [];
   const inputFileName: string = location.state?.inputFileName || '';
   const focusedEmotions: string[] | null = location.state?.focusedEmotions ?? null;
+  const modelValue: string = location.state?.modelValue ?? 'default';
   const allRows =
     sourceType === 'webcam'
       ? webcamResults
@@ -78,15 +79,9 @@ const ViewResult = (props: ViewResultProps) => {
     URL.revokeObjectURL(url);
   };
 
-  const ALL_EMOTIONS: string[] = [
-    'Happiness',
-    'Sadness',
-    'Surprise',
-    'Fear',
-    'Disgust',
-    'Anger',
-    'Neutral',
-  ];
+  const ALL_EMOTIONS: string[] = modelValue === 'emo-net'
+    ? ['Happiness', 'Sadness', 'Surprise', 'Fear', 'Disgust', 'Anger']
+    : ['Happiness', 'Sadness', 'Surprise', 'Fear', 'Disgust', 'Anger', 'Neutral'];
 
   const heatmap = useMemo<{
     emotions: string[];
@@ -97,10 +92,9 @@ const ViewResult = (props: ViewResultProps) => {
       return { emotions: ALL_EMOTIONS, grid: ALL_EMOTIONS.map(() => []), timeLabels: [] };
     }
 
-    const presentEmotions = new Set(rows.map((r: any) => r.emotion || 'Unknown'));
     const emotions: string[] = focusedEmotions
-      ? ALL_EMOTIONS.filter(e => focusedEmotions.includes(e) && presentEmotions.has(e))
-      : ALL_EMOTIONS.filter(e => presentEmotions.has(e));
+      ? ALL_EMOTIONS.filter(e => focusedEmotions.includes(e))
+      : ALL_EMOTIONS;
 
     const hasFrameTime = rows[0]?.frame_number != null && rows[0]?.fps != null;
     const t0 = hasFrameTime
@@ -225,7 +219,7 @@ const ViewResult = (props: ViewResultProps) => {
     const pan = row.pan !== undefined && row.pan !== '' ? `${row.pan}°` : '—';
     const conf = row.confidence !== undefined && row.confidence !== '' ? `${Number(row.confidence * 100).toFixed(0)}%` : '';
     const color = EMOTION_COLORS[emotion] || '#aaa';
-    const thumb = row.face_thumb_base64 ? `data:image/jpeg;base64,${row.face_thumb_base64}` : null;
+    const thumb = row.thumb ?? (row.face_thumb_base64 ? `data:image/jpeg;base64,${row.face_thumb_base64}` : null);
     return { idx, emotion, pose, pan, conf, color, key: i, thumb };
   });
 
@@ -376,7 +370,7 @@ const ViewResult = (props: ViewResultProps) => {
               <button
                 className={`vr-chart-toggle-btn${selectedFormat === 'GRAPH' ? ' active' : ''}`}
                 onClick={() => setSelectedFormat('GRAPH')}
-              >Graph</button>
+              >Heat Map</button>
             )}
             <button
               className={`vr-chart-toggle-btn${selectedFormat === 'PIE' ? ' active' : ''}`}
@@ -396,13 +390,13 @@ const ViewResult = (props: ViewResultProps) => {
               };
 
               return (
-                <div ref={heatmapContainerRef} style={{ overflow: 'auto', padding: '20px', flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' , marginLeft: '-10%'}}>
+                <div ref={heatmapContainerRef} style={{ overflow: 'auto', padding: '20px', flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' , marginTop: '9%'}}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <div style={{ display: 'flex' }}>
                       {/* Emotion labels column */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flexShrink: 0 }}>
                         {emotions.map((em: string) => (
-                          <div key={em} style={{ width: 90, fontSize: 12, height: boxSize, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 6 , marginLeft: '-16%' }}>
+                          <div key={em} style={{ width: 90, fontSize: 12, height: boxSize, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 6 }}>
                             {em}
                           </div>
                         ))}

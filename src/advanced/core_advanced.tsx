@@ -38,7 +38,7 @@ function Core_Ad(props: CardAdProps) {
     const [preview, setPreview] = useState<string | null>(null);
     const [_previewList, setPreviewList] = useState<string[]>([]);
     const [isWebcamActive, setIsWebcamActive] = useState(false);
-    const captureIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const captureIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const webcamProcessingRef = useRef(false);
     const [webcamError, setWebcamError] = useState<string | null>(null);
     const imgRef = useRef<HTMLImageElement>(null);
@@ -71,7 +71,7 @@ function Core_Ad(props: CardAdProps) {
     const [inputLocked, setInputLocked] = useState(true);
     const [isVideoReplaying, setIsVideoReplaying] = useState(false);
     const [webcamResults, setWebcamResults] = useState<any[]>([]);
-    const [webcamLiveEmotion, setWebcamLiveEmotion] = useState<{ emotion: string; confidence: number; pose: string; pan: number; thumb?: string } | null>(null);
+    const [webcamLiveEmotion, setWebcamLiveEmotion] = useState<Array<{ emotion: string; confidence: number; pose: string; pan: number; thumb?: string }> | null>(null);
     const [_webcamFrameIndex, setWebcamFrameIndex] = useState(0);
     const [streamingSequences, setStreamingSequences] = useState<SequenceResult[]>([]);
     const [videoBoxActive, setVideoBoxActive] = useState(false);
@@ -102,7 +102,7 @@ function Core_Ad(props: CardAdProps) {
     const clearWebcamSession = () => {
       const sid = webcamSessionIdRef.current;
       if (sid) {
-        fetch(`http://127.0.0.1:8000/webcam-session/${sid}`, {
+        fetch(`${import.meta.env.VITE_API_BASE ?? ''}/webcam-session/${sid}`, {
           method: 'DELETE',
           headers: { 'x-api-key': import.meta.env.VITE_API_KEY ?? '' },
         }).catch(() => {});
@@ -244,7 +244,7 @@ function Core_Ad(props: CardAdProps) {
 const handleWebcamModelSelect = (value: string) => {
       const option: DropdownOption = {
         id: value === 'emo-net' ? 2 : 1,
-        label: value === 'emo-net' ? 'Emo-Net (fine tune)' : 'Emo-Net (Dense 7)',
+        label: value === 'emo-net' ? 'Emo-Net (fine tune)' : 'Emo-Net',
         value,
       };
 
@@ -274,7 +274,7 @@ const handleWebcamModelSelect = (value: string) => {
     const handleVideoModelSelect = (value: string) => {
       const option: DropdownOption = {
         id: value === 'emo-net' ? 2 : 1,
-        label: value === 'emo-net' ? 'Emo-Net (fine tune)' : 'Emo-Net (Dense 7)',
+        label: value === 'emo-net' ? 'Emo-Net (fine tune)' : 'Emo-Net',
         value,
       };
 
@@ -375,7 +375,7 @@ const handleWebcamModelSelect = (value: string) => {
       const f = file;
       const fe = focusedEmotions ? Array.from(focusedEmotions) : null;
       endSession();
-      navigate('/advanced/View_Result', { state: { prediction: p, webcamResults: wr, sourceType: st, videoUrl: f, inputFileName, focusedEmotions: fe } });
+      navigate('/advanced/View_Result', { state: { prediction: p, webcamResults: wr, sourceType: st, videoUrl: f, inputFileName, focusedEmotions: fe, modelValue: selectedOption?.value } });
       if (props.setTrigger) props.setTrigger(false);
     };
   
@@ -420,7 +420,7 @@ const handleWebcamModelSelect = (value: string) => {
       formData.append('model', selectedOption?.value === 'default' ? 'dense7' : 'finetune');
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/predict-webcam-emonet/lstm/', {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE ?? ''}/predict-webcam-emonet/lstm/`, {
           method: 'POST',
           headers: { 'x-api-key': import.meta.env.VITE_API_KEY ?? '' },
           body: formData,
@@ -434,22 +434,63 @@ const handleWebcamModelSelect = (value: string) => {
           setPrediction(result);
         }
 
-        if (result.ready) {
-          setWebcamLiveEmotion({
-            emotion: result.emotion ?? '',
-            confidence: result.confidence ?? 0,
-            pose: result.pose ?? '',
-            pan: result.pan ?? 0,
-            thumb: result.face_thumb_base64 ? `data:image/jpeg;base64,${result.face_thumb_base64}` : undefined,
-          });
-          setWebcamResults(prev => [...prev, {
-            frameIndex: prev.length + 1,
-            timestamp: new Date().toISOString(),
-            emotion: result.emotion ?? '',
-            confidence: result.confidence ?? '',
-            pose: result.pose ?? '',
-            pan: result.pan ?? '',
-          }]);
+        if (result.faces?.length) {
+          const capturedSrc = lastCapturedFrameRef.current;
+
+          const processWithThumbs = (thumbs: (string | undefined)[]) => {
+            setWebcamLiveEmotion(result.faces.map((f: any, i: number) => ({
+              emotion: f.emotion ?? '',
+              confidence: f.confidence ?? 0,
+              pose: f.pose ?? '',
+              pan: f.pan ?? 0,
+              thumb: thumbs[i],
+            })));
+            if (result.ready) {
+              const readyEntries = (result.faces as any[])
+                .map((f: any, i: number) => ({ f, thumb: thumbs[i] }))
+                .filter(({ f }) => f.ready);
+              if (readyEntries.length) {
+                setWebcamResults(prev => [
+                  ...prev,
+                  ...readyEntries.map(({ f, thumb }: any, i: number) => ({
+                    frameIndex: prev.length + i + 1,
+                    timestamp: new Date().toISOString(),
+                    emotion: f.emotion ?? '',
+                    confidence: f.confidence ?? '',
+                    pose: f.pose ?? '',
+                    pan: f.pan ?? '',
+                    thumb,
+                  })),
+                ]);
+              }
+            }
+          };
+
+          if (capturedSrc && result.image_width) {
+            const img = new Image();
+            img.onload = () => {
+              const rx = img.naturalWidth / result.image_width;
+              const ry = img.naturalHeight / result.image_height;
+              const thumbs = result.faces.map((f: any) => {
+                if (!f.box) return undefined;
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return undefined;
+                const x = Math.max(0, f.box.x * rx);
+                const y = Math.max(0, f.box.y * ry);
+                const w = Math.min(img.naturalWidth - x, f.box.w * rx);
+                const h = Math.min(img.naturalHeight - y, f.box.h * ry);
+                canvas.width = w;
+                canvas.height = h;
+                ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
+                return canvas.toDataURL('image/jpeg');
+              });
+              processWithThumbs(thumbs);
+            };
+            img.src = capturedSrc;
+          } else {
+            processWithThumbs(result.faces.map(() => undefined));
+          }
         }
       } catch { /* ignore network errors */ }
     };
@@ -475,7 +516,7 @@ const handleWebcamModelSelect = (value: string) => {
 
       try {
         if (model === 'emo-net' || model === 'default') {
-          const response = await fetch(`http://127.0.0.1:8000/predict-image-emonet/?preview=${isWebcamActive ? 0 : 1}&model=dense6`, {
+          const response = await fetch(`${import.meta.env.VITE_API_BASE ?? ''}/predict-image-emonet/?preview=${isWebcamActive ? 0 : 1}&model=dense6`, {
             method: 'POST',
             headers: { 'x-api-key': import.meta.env.VITE_API_KEY ?? '' },
             body: formData
@@ -512,7 +553,7 @@ const handleWebcamModelSelect = (value: string) => {
           }
 
         } else {
-          const response = await fetch(`http://127.0.0.1:8000/predict-image-emonet/?preview=${isWebcamActive ? 0 : 1}&model=dense6`, {
+          const response = await fetch(`${import.meta.env.VITE_API_BASE ?? ''}/predict-image-emonet/?preview=${isWebcamActive ? 0 : 1}&model=dense6`, {
             method: 'POST',
             headers: { 'x-api-key': import.meta.env.VITE_API_KEY ?? '' },
             body: formData
@@ -589,7 +630,7 @@ const handleWebcamModelSelect = (value: string) => {
       try {
         if (model === 'emo-net' || model === 'default') {
           formData.append('model', model === 'default' ? 'dense7' : 'finetune');
-          const response = await fetch("http://127.0.0.1:8000/predict-video-emonet/stream/", {
+          const response = await fetch(`${import.meta.env.VITE_API_BASE ?? ''}/predict-video-emonet/stream/`, {
             method: "POST",
             headers: { 'x-api-key': import.meta.env.VITE_API_KEY ?? '' },
             body: formData,
@@ -665,7 +706,7 @@ const handleWebcamModelSelect = (value: string) => {
             }
           }
         } else {
-          const response = await fetch("http://127.0.0.1:8000/predict-video-emonet/?preview=1", {
+          const response = await fetch(`${import.meta.env.VITE_API_BASE ?? ''}/predict-video-emonet/?preview=1`, {
             method: "POST",
             headers: { 'x-api-key': import.meta.env.VITE_API_KEY ?? '' },
             body: formData,
@@ -1046,13 +1087,13 @@ return (
                       className="model-menu-item"
                       onClick={() => handleVideoModelSelect('default')}
                     >
-                      Emo-Net (Dense 7)
+                      Emo-Net
                     </div>
                     <div
                       className="model-menu-item"
                       onClick={() => handleVideoModelSelect('emo-net')}
                     >
-                      Emo-Net (fine tune)
+                      'Emo-Net(finetune)'
                     </div>
                   </div>
                 )}
@@ -1084,7 +1125,7 @@ return (
                   className="model-menu-item"
                   onClick={() => handleWebcamModelSelect('default')}
                 >
-                  Emo-Net (Dense 7)
+                  Emo-Net
                 </div>
                 <div
                   className="model-menu-item"
@@ -1191,20 +1232,20 @@ return (
               isFocused={isFocused}
               activeSeqIndex={activeSeqIndex}
             />
-            {isWebcamActive && webcamLiveEmotion && isFocused(webcamLiveEmotion.emotion) ? (
+            {isWebcamActive && webcamLiveEmotion && webcamLiveEmotion.some(f => isFocused(f.emotion)) ? (
               <div className="face-list-ad">
-                <div className="face-card-ad" style={{ border: `3px solid ${EMOTION_COLORS[webcamLiveEmotion.emotion] ?? '#ffffff'}` }}>
-                  <span className="face-card-num-ad" style={{ background: EMOTION_COLORS[webcamLiveEmotion.emotion] ?? '#ffffff' }}>1</span>
-                  {webcamLiveEmotion.thumb && (
-                    <img src={webcamLiveEmotion.thumb} alt="face" className="face-thumb-ad" />
-                  )}
-                  <div className="result-ad">
-                    <span className="result-chip-ad" style={{ background: EMOTION_COLORS[webcamLiveEmotion.emotion] ?? '#ffffff' }}>{webcamLiveEmotion.emotion}</span>
-                    <br />{(webcamLiveEmotion.confidence * 100).toFixed(1)}%
-                    {webcamLiveEmotion.pose && <><br />Pose: {webcamLiveEmotion.pose}</>}
-                    {webcamLiveEmotion.pan !== 0 && <><br />Pan: {webcamLiveEmotion.pan.toFixed(1)}°</>}
+                {webcamLiveEmotion.map((f, i) => isFocused(f.emotion) ? (
+                  <div key={i} className="face-card-ad" style={{ border: `3px solid ${EMOTION_COLORS[f.emotion] ?? '#ffffff'}` }}>
+                    <span className="face-card-num-ad" style={{ background: EMOTION_COLORS[f.emotion] ?? '#ffffff' }}>{i + 1}</span>
+                    {f.thumb && <img src={f.thumb} alt="face" className="face-thumb-ad" />}
+                    <div className="result-ad">
+                      <span className="result-chip-ad" style={{ background: EMOTION_COLORS[f.emotion] ?? '#ffffff' }}>{f.emotion}</span>
+                      <br />{(f.confidence * 100).toFixed(1)}%
+                      {f.pose && <><br />Pose: {f.pose}</>}
+                      {f.pan !== 0 && <><br />Pan: {f.pan.toFixed(1)}°</>}
+                    </div>
                   </div>
-                </div>
+                ) : null)}
               </div>
             ) : (
               <FaceCardList
