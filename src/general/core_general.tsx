@@ -152,7 +152,7 @@ function Core_gen(props: CoreGenProps) {
     const formData = new FormData();
     formData.append('file', f);
     try {
-      const response = await fetch('http://127.0.0.1:8000/predict-image-emonet/?preview=0&model=dense6', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE ?? ''}/predict-image-emonet/?preview=0&model=dense6`, {
         method: 'POST',
         headers: { 'x-api-key': import.meta.env.VITE_API_KEY ?? '' },
         body: formData,
@@ -254,8 +254,8 @@ function Core_gen(props: CoreGenProps) {
 
     try {
       const endpoint = isWebcamActive
-        ? 'http://127.0.0.1:8000/predict-image-emonet/?preview=0&model=dense6'
-        : 'http://127.0.0.1:8000/predict-image-emonet/?preview=1&model=dense6';
+        ? `${import.meta.env.VITE_API_BASE ?? ''}/predict-image-emonet/?preview=0&model=dense6`
+        : `${import.meta.env.VITE_API_BASE ?? ''}/predict-image-emonet/?preview=1&model=dense6`;
       const response = await fetch(endpoint, { method: 'POST', headers: { 'x-api-key': import.meta.env.VITE_API_KEY ?? '' }, body: formData });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
@@ -302,7 +302,7 @@ function Core_gen(props: CoreGenProps) {
     const formData = new FormData();
     formData.append('file', frameFile);
     try {
-      const response = await fetch('http://127.0.0.1:8000/predict-image-emonet/?preview=0&model=dense6', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE ?? ''}/predict-image-emonet/?preview=0&model=dense6`, {
         method: 'POST', headers: { 'x-api-key': import.meta.env.VITE_API_KEY ?? '' }, body: formData,
       });
       if (!response.ok) return;

@@ -32,7 +32,7 @@ EMO_LABELS = ["Anger", "Disgust", "Fear", "Happiness", "Neutral", "Sadness", "Su
 
 # Emo-Net config
 _HERE = os.path.dirname(os.path.abspath(__file__))
-EMONET_FE_PATH        = os.getenv("EMONET_FE_PATH",        os.path.join(_HERE, "phase3_best.h5"))
+EMONET_FE_PATH        = os.getenv("EMONET_FE_PATH",        os.path.join(_HERE, "phase2_best.h5"))
 EMONET_DENSE7_PATH    = os.getenv("EMONET_DENSE7_PATH",    os.path.join(_HERE, "weights_0_66_49_wo_gl.h5"))
 EMONET_LSTM_PATH      = os.getenv("EMONET_LSTM_PATH",      os.path.join(_HERE, "lstm_p3_best.h5"))
 EMONET_DENSE7_LSTM_PATH = os.getenv("EMONET_DENSE7_LSTM_PATH", os.path.join(_HERE, "SAVEE_with_config.h5"))
@@ -85,13 +85,30 @@ def infer_emotion_from_tf(face_bgr: np.ndarray):
     if not ok:
         return None
 
-    r = requests.post(
-        TF_EMOTION_URL,
-        files={"file": ("face.jpg", jpg.tobytes(), "image/jpeg")},
-        timeout=10
-    )
-    r.raise_for_status()
-    return r.json()  # {"emotion": <int>, "scores": [...]}
+    try:
+        r = requests.post(
+            TF_EMOTION_URL,
+            files={"file": ("face.jpg", jpg.tobytes(), "image/jpeg")},
+            timeout=10
+        )
+        r.raise_for_status()
+        return r.json()  # {"emotion": <int>, "scores": [...]}
+    except Exception:
+        return None
+
+def _infer_emotion_emonet(face_bgr: np.ndarray):
+    """Fallback emotion inference using the local Emo-Net Dense7 model."""
+    if _emonet_image_model is None or face_bgr is None or face_bgr.size == 0:
+        return None
+    try:
+        face_rgb = cv2.cvtColor(face_bgr, cv2.COLOR_BGR2RGB)
+        face_resized = cv2.resize(face_rgb, (224, 224), interpolation=cv2.INTER_AREA)
+        face_arr = vggface_preprocess(img_to_array(face_resized), version=2)
+        pred = _emonet_image_model.predict(face_arr[np.newaxis], verbose=0)[0]
+        emotion_idx = int(np.argmax(pred))
+        return {"emotion": EMONET_LABELS_D7[emotion_idx], "confidence": float(pred[emotion_idx])}
+    except Exception:
+        return None
 #end
 
 # Rate limiting
@@ -113,13 +130,13 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # CORS แบบยืดหยุน (กำหนดใน environment)
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
     allow_credentials=False,
-    allow_methods=["POST", "GET", "OPTIONS"],
+    allow_methods=["POST", "GET", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -325,6 +342,11 @@ async def predict_image(
                         emo = EMO_LABELS[emo_id]
                     if scores:
                         conf = float(max(scores))
+                else:
+                    emo_res = _infer_emotion_emonet(face_crop)
+                    if emo_res:
+                        emo = emo_res["emotion"]
+                        conf = emo_res["confidence"]
 
             f["emotion"] = emo
             f["confidence"] = conf
@@ -468,6 +490,11 @@ async def predict_video(
                 if 0 <= emo_id < len(EMO_LABELS):
                     emo = EMO_LABELS[emo_id]
                 conf = float(max(scores)) if scores else 0.0
+            else:
+                emo_res = _infer_emotion_emonet(face_crop)
+                if emo_res:
+                    emo = emo_res["emotion"]
+                    conf = emo_res["confidence"]
 
             faces.append({
                 "pose": f["pose"],
@@ -562,13 +589,19 @@ async def predict_image_emonet(
             preds = image_model.predict(batch, verbose=0)
             for pred, (_, pose_val, pan_val, x0, y0, x1, y1) in zip(preds, valid_faces):
                 emotion_idx = int(np.argmax(pred))
-                faces.append({
+                face_entry: dict = {
                     "emotion": image_labels[emotion_idx],
                     "confidence": float(pred[emotion_idx]),
                     "pose": pose_val,
                     "pan": pan_val,
                     "box": {"x": x0, "y": y0, "w": x1 - x0, "h": y1 - y0},
-                })
+                }
+                face_crop = image_bgr[y0:y1, x0:x1]
+                if face_crop.size > 0:
+                    _tc_h, _tc_w = face_crop.shape[:2]; _tc_scale = max(1.0, 128 / min(_tc_h, _tc_w)); _tc_thumb = cv2.resize(face_crop, (max(1, int(_tc_w * _tc_scale)), max(1, int(_tc_h * _tc_scale))), interpolation=cv2.INTER_CUBIC); ok_t, jpg_t = cv2.imencode('.jpg', _tc_thumb, [cv2.IMWRITE_JPEG_QUALITY, 85])
+                    if ok_t:
+                        face_entry["face_thumb_base64"] = base64.b64encode(jpg_t.tobytes()).decode()
+                faces.append(face_entry)
 
         first_emotion = faces[0]["emotion"] if faces else "No Face Detected"
         first_conf = faces[0]["confidence"] if faces else 0.0
@@ -585,9 +618,9 @@ async def predict_image_emonet(
 
         if preview and faces:
             emotions_list = [f["emotion"] for f in faces]
-            landmarks_dummy = [[] for _ in faces]
+            landmarks_dummy = [[[f["box"]["x"], f["box"]["y"]]] for f in faces]
             angle_dummy = [0.0 for _ in faces]
-            pan_list = [0.0 for _ in faces]
+            pan_list = [f.get("pan", 0.0) for f in faces]
             with tempfile.NamedTemporaryFile(suffix=".jpg", delete=False) as tmp:
                 out_path = visualize_plt(
                     image_bgr, landmarks_dummy, angle_dummy, angle_dummy,
@@ -726,10 +759,7 @@ async def predict_webcam_emonet_lstm(
     # Init or retrieve session
     now = time.time()
     if session_id not in webcam_lstm_sessions:
-        webcam_lstm_sessions[session_id] = {
-            'features': [], 'new_count': 0, 'seq_idx': 0, 'last_access': now,
-            'last_emotion': '', 'last_conf': 0.0,
-        }
+        webcam_lstm_sessions[session_id] = {'last_access': now, 'face_sessions': {}}
     session = webcam_lstm_sessions[session_id]
     session['last_access'] = now
 
@@ -751,69 +781,93 @@ async def predict_webcam_emonet_lstm(
         faces_det = _emonet_detector(frame, cv=False)
         valid_faces = [(b, l, p) for b, l, p in faces_det if p > 0.5]
         if not valid_faces:
-            return {'ready': False}  # no face — skip frame
-
-        det_box, det_landmarks, _ = valid_faces[0]
-        x0 = max(0, int(det_box[0]))
-        y0 = max(0, int(det_box[1]))
-        x1 = min(fw, int(det_box[2]))
-        y1 = min(fh, int(det_box[3]))
-        face_crop = frame[y0:y1, x0:x1]
-        if face_crop.size == 0:
             return {'ready': False}
 
-        face_rgb = cv2.cvtColor(face_crop, cv2.COLOR_BGR2RGB)
-        face_resized = cv2.resize(face_rgb, (224, 224), interpolation=cv2.INTER_AREA)
-        face_arr = img_to_array(face_resized)
-        feature = ee_model(np.expand_dims(vggface_preprocess(face_arr, version=2), 0)).numpy()[0]
+        # Sort left-to-right for consistent face index assignment
+        valid_faces.sort(key=lambda x: x[0][0])
 
-        session['features'].append(feature)
-        session['new_count'] += 1
+        face_sessions = session['face_sessions']
+        # Remove buffers for faces that are no longer detected
+        for k in list(face_sessions.keys()):
+            if k >= len(valid_faces):
+                del face_sessions[k]
 
-        box_info = {'x': x0, 'y': y0, 'w': x1 - x0, 'h': y1 - y0}
-        pose_val, pan_val = _estimate_pose_from_landmarks(det_landmarks)
+        faces_result = []
+        any_ready = False
 
-        if len(session['features']) >= WIN and session['new_count'] >= STEP:
-            window = np.array(session['features'][-WIN:])
-            pred = lstm_model(window[np.newaxis, ...]).numpy()[0]
-            emo_idx = int(np.argmax(pred))
+        for face_idx, (det_box, det_landmarks, _) in enumerate(valid_faces):
+            x0 = max(0, int(det_box[0]))
+            y0 = max(0, int(det_box[1]))
+            x1 = min(fw, int(det_box[2]))
+            y1 = min(fh, int(det_box[3]))
+            face_crop = frame[y0:y1, x0:x1]
+            if face_crop.size == 0:
+                continue
 
-            _fh, _fw = face_crop.shape[:2]; _pad = max(int(_fh * 0.30), int(_fw * 0.30)); _padded = cv2.copyMakeBorder(face_crop, _pad, _pad, _pad, _pad, cv2.BORDER_REPLICATE); face_thumb = cv2.resize(_padded, (64, 64))
-            ok, jpg = cv2.imencode('.jpg', face_thumb, [cv2.IMWRITE_JPEG_QUALITY, 75])
+            face_rgb = cv2.cvtColor(face_crop, cv2.COLOR_BGR2RGB)
+            face_resized = cv2.resize(face_rgb, (224, 224), interpolation=cv2.INTER_AREA)
+            face_arr = img_to_array(face_resized)
+            feature = ee_model(np.expand_dims(vggface_preprocess(face_arr, version=2), 0)).numpy()[0]
 
-            result = {
-                'ready': True,
-                'prediction': labels[emo_idx],
-                'emotion': labels[emo_idx],
-                'confidence': float(pred[emo_idx]),
-                'pose': pose_val,
-                'pan': float(np.round(pan_val, 1)),
-                'sequence_index': session['seq_idx'],
-                'box': box_info,
-                'image_width': fw,
-                'image_height': fh,
-                'face_count': 1,
-                'faces': [{'emotion': labels[emo_idx], 'confidence': float(pred[emo_idx]),
-                           'pose': pose_val, 'pan': float(np.round(pan_val, 1)), 'box': box_info}],
-            }
-            if ok:
-                result['face_thumb_base64'] = base64.b64encode(jpg.tobytes()).decode()
-            session['new_count'] = 0
-            session['seq_idx'] += 1
-            session['last_emotion'] = labels[emo_idx]
-            session['last_conf'] = float(pred[emo_idx])
-            return result
+            if face_idx not in face_sessions:
+                face_sessions[face_idx] = {
+                    'features': [], 'new_count': 0, 'seq_idx': 0,
+                    'last_emotion': '', 'last_conf': 0.0,
+                }
+            fses = face_sessions[face_idx]
+            fses['features'].append(feature)
+            fses['new_count'] += 1
 
-        # Not enough frames for new LSTM result — return box + last known emotion
+            box_info = {'x': x0, 'y': y0, 'w': x1 - x0, 'h': y1 - y0}
+            pose_val, pan_val = _estimate_pose_from_landmarks(det_landmarks)
+
+            if len(fses['features']) >= WIN and fses['new_count'] >= STEP:
+                window = np.array(fses['features'][-WIN:])
+                pred = lstm_model(window[np.newaxis, ...]).numpy()[0]
+                emo_idx = int(np.argmax(pred))
+
+                face_result: dict = {
+                    'ready': True,
+                    'emotion': labels[emo_idx],
+                    'confidence': float(pred[emo_idx]),
+                    'pose': pose_val,
+                    'pan': float(np.round(pan_val, 1)),
+                    'sequence_index': fses['seq_idx'],
+                    'box': box_info,
+                }
+
+                fses['new_count'] = 0
+                fses['seq_idx'] += 1
+                fses['last_emotion'] = labels[emo_idx]
+                fses['last_conf'] = float(pred[emo_idx])
+                any_ready = True
+            else:
+                face_result = {
+                    'ready': False,
+                    'emotion': fses['last_emotion'],
+                    'confidence': fses['last_conf'],
+                    'pose': pose_val,
+                    'pan': float(np.round(pan_val, 1)),
+                    'box': box_info,
+                }
+
+            faces_result.append(face_result)
+
+        if not faces_result:
+            return {'ready': False}
+
+        first = faces_result[0]
         return {
-            'ready': False,
-            'box': box_info,
+            'ready': any_ready,
+            'prediction': first.get('emotion', ''),
+            'emotion': first.get('emotion', ''),
+            'confidence': first.get('confidence', 0.0),
+            'pose': first.get('pose', ''),
+            'pan': first.get('pan', 0.0),
+            'face_count': len(faces_result),
             'image_width': fw,
             'image_height': fh,
-            'faces': [{'box': box_info,
-                       'emotion': session['last_emotion'],
-                       'confidence': session['last_conf'],
-                       'pose': pose_val, 'pan': float(np.round(pan_val, 1))}],
+            'faces': faces_result,
         }
 
     except Exception:
@@ -824,6 +878,12 @@ async def predict_webcam_emonet_lstm(
 async def clear_webcam_session(session_id: str):
     webcam_lstm_sessions.pop(session_id, None)
     return {'ok': True}
+
+@app.delete("/sessions")
+async def clear_all_sessions():
+    count = len(webcam_lstm_sessions)
+    webcam_lstm_sessions.clear()
+    return {'ok': True, 'cleared': count}
 
 
 @app.websocket("/ws/webcam-emonet/")
@@ -875,8 +935,7 @@ async def ws_webcam_emonet(websocket: WebSocket):
                     window = np.array(features[-WIN:])
                     pred = _emonet_lstm_model(window[np.newaxis, ...]).numpy()[0]
                     emo_idx = int(np.argmax(pred))
-                    _fh, _fw = face_crop.shape[:2]; _pad = max(int(_fh * 0.30), int(_fw * 0.30)); _padded = cv2.copyMakeBorder(face_crop, _pad, _pad, _pad, _pad, cv2.BORDER_REPLICATE); face_thumb = cv2.resize(_padded, (64, 64))
-                    ok, jpg = cv2.imencode('.jpg', face_thumb, [cv2.IMWRITE_JPEG_QUALITY, 75])
+                    _tc_h, _tc_w = face_crop.shape[:2]; _tc_scale = max(1.0, 128 / min(_tc_h, _tc_w)); _tc_thumb = cv2.resize(face_crop, (max(1, int(_tc_w * _tc_scale)), max(1, int(_tc_h * _tc_scale))), interpolation=cv2.INTER_CUBIC); ok, jpg = cv2.imencode('.jpg', _tc_thumb, [cv2.IMWRITE_JPEG_QUALITY, 85])
                     result = {
                         'ready': True,
                         'prediction': EMONET_LABELS[emo_idx],
@@ -1018,8 +1077,7 @@ async def predict_video_emonet(
                             y1 = min(fh, int(det_box[3]))
                             face_crop = seq_frame[y0:y1, x0:x1]
                             if face_crop.size > 0:
-                                _fh, _fw = face_crop.shape[:2]; _pad = max(int(_fh * 0.30), int(_fw * 0.30)); _padded = cv2.copyMakeBorder(face_crop, _pad, _pad, _pad, _pad, cv2.BORDER_REPLICATE); face_thumb = cv2.resize(_padded, (64, 64))
-                                ok, jpg = cv2.imencode(".jpg", face_thumb, [cv2.IMWRITE_JPEG_QUALITY, 75])
+                                _tc_h, _tc_w = face_crop.shape[:2]; _tc_scale = max(1.0, 128 / min(_tc_h, _tc_w)); _tc_thumb = cv2.resize(face_crop, (max(1, int(_tc_w * _tc_scale)), max(1, int(_tc_h * _tc_scale))), interpolation=cv2.INTER_CUBIC); ok, jpg = cv2.imencode(".jpg", _tc_thumb, [cv2.IMWRITE_JPEG_QUALITY, 85])
                                 if ok:
                                     seq_entry["face_thumb_base64"] = base64.b64encode(jpg.tobytes()).decode()
                 except Exception:
@@ -1222,8 +1280,7 @@ async def predict_video_emonet_stream(
                         emo_idx = int(np.argmax(pred))
                         bi = box_info
 
-                        _fh, _fw = face_crop.shape[:2]; _pad = max(int(_fh * 0.30), int(_fw * 0.30)); _padded = cv2.copyMakeBorder(face_crop, _pad, _pad, _pad, _pad, cv2.BORDER_REPLICATE); face_thumb = cv2.resize(_padded, (64, 64))
-                        ok, jpg = cv2.imencode('.jpg', face_thumb, [cv2.IMWRITE_JPEG_QUALITY, 75])
+                        _tc_h, _tc_w = face_crop.shape[:2]; _tc_scale = max(1.0, 128 / min(_tc_h, _tc_w)); _tc_thumb = cv2.resize(face_crop, (max(1, int(_tc_w * _tc_scale)), max(1, int(_tc_h * _tc_scale))), interpolation=cv2.INTER_CUBIC); ok, jpg = cv2.imencode('.jpg', _tc_thumb, [cv2.IMWRITE_JPEG_QUALITY, 85])
 
                         seq_entry = {
                             'sequence_index': global_seq_idx,
@@ -1357,8 +1414,7 @@ async def predict_video_emonet_d7_stream(
                     emo_idx = int(np.argmax(pred))
 
                     pose_val, pan_val = _estimate_pose_from_landmarks(landmarks)
-                    _fh, _fw = face_crop.shape[:2]; _pad = max(int(_fh * 0.30), int(_fw * 0.30)); _padded = cv2.copyMakeBorder(face_crop, _pad, _pad, _pad, _pad, cv2.BORDER_REPLICATE); face_thumb = cv2.resize(_padded, (64, 64))
-                    ok, jpg = cv2.imencode('.jpg', face_thumb, [cv2.IMWRITE_JPEG_QUALITY, 75])
+                    _tc_h, _tc_w = face_crop.shape[:2]; _tc_scale = max(1.0, 128 / min(_tc_h, _tc_w)); _tc_thumb = cv2.resize(face_crop, (max(1, int(_tc_w * _tc_scale)), max(1, int(_tc_h * _tc_scale))), interpolation=cv2.INTER_CUBIC); ok, jpg = cv2.imencode('.jpg', _tc_thumb, [cv2.IMWRITE_JPEG_QUALITY, 85])
 
                     seq_entry = {
                         'sequence_index': global_seq_idx,
@@ -1425,12 +1481,19 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": f"Internal server error: {str(exc)}"}
     )
 
+# Serve React build as static files (must be last)
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+_DIST = os.path.join(os.path.dirname(__file__), "..", "..", "dist")
+if os.path.isdir(_DIST):
+    app.mount("/", StaticFiles(directory=_DIST, html=True), name="static")
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        "face_analyze.main:app", 
-        host="0.0.0.0", 
-        port=8000, 
+        "face_analyze.main:app",
+        host="0.0.0.0",
+        port=8000,
         reload=True,
         log_level="info"
     )
