@@ -390,7 +390,7 @@ const ViewResult = (props: ViewResultProps) => {
               };
 
               return (
-                <div ref={heatmapContainerRef} style={{ overflow: 'auto', padding: '20px', flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' , marginTop: '9%'}}>
+                <div ref={heatmapContainerRef} style={{ overflow: 'auto', padding: '20px', flex: 1, display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start' , marginTop: '9%'}}>
                   <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <div style={{ display: 'flex' }}>
                       {/* Emotion labels column */}
